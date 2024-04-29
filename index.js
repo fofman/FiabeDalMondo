@@ -88,31 +88,43 @@ app.get("/signup", (req, res) => {
     res.render("signup");
 });
 
-app.post("/signup", async (req, res) => {
+app.post("/signup", (req, res) => {
     let {mail, username, password, password_check} = req.body;
     let invia = true;
     invia &= (mail.length > 0);
     invia &= (username.length > 0);
     invia &= (password.length > 0 && password == password_check);
 
-    if(invia){
-        console.log("ok");
-        const encryptedPassword = await bcrypt.hash(password, saltRounds);
-        connection.query('INSERT INTO utenti (mail, username, password_hash) VALUES (?,?,?)', [mail, username, encryptedPassword], function (error, results, fields) {
-            if (error) throw error;
-            console.log("utente inserito");
-            req.session.userId = results.insertId;
-            req.session.auth = true;
-          });
-    }
-    else{
-        dati = {
-            "mail": mail,
-            "username": username,
-            "password": password
-        };
-        res.render("signup", {dati});
-    }
+    //controlla che la mail non sia già registrata
+    connection.query('SELECT mail FROM utenti', async (error, results, fields) => {
+        if (error) throw error;
+        for(let row of results){
+            if(row.mail == mail){
+                invia = false;
+                console.log("mail già usata");
+            }
+        }
+
+        if(invia){
+            const encryptedPassword = await bcrypt.hash(password, saltRounds);
+            connection.query('INSERT INTO utenti (mail, username, password_hash) VALUES (?,?,?)', [mail, username, encryptedPassword], function (error, results, fields) {
+                if (error) throw error;
+                console.log("utente inserito");
+                req.session.userId = results.insertId;
+                req.session.auth = true;
+              });
+        }
+        else{
+            let dati = {
+                "mail": mail,
+                "username": username,
+                "password": password
+            };
+            //res.render("signup", {dati});
+        }
+    });
+
+    
 
 });
 

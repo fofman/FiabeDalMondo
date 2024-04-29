@@ -59,3 +59,5 @@
 ::1 - GET / HTTP/1.1 500 1306 - 14.081 ms
 ::1 - GET /public/signup.html HTTP/1.1 304 - - 15.605 ms
 ::1 - GET /aggiungi HTTP/1.1 401 13 - 8.070 ms
+::1 - GET /public/signup.html HTTP/1.1 304 - - 13.735 ms
+::1 - GET /favicon.ico HTTP/1.1 404 16 - 7.521 ms
