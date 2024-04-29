@@ -1,0 +1,21 @@
+doctype html
+head
+    title Login
+h1 Login Form
+form(action='/login' method='post')
+    label(for='email') Email:
+    br
+    input#email(type='email' name='mail' value=dati.mail)
+    br
+    br
+    label(for='username') Username:
+    br
+    input#username(type='text' name='username' value=dati.username)
+    br
+    br
+    label(for='password') Password:
+    br
+    input#password(type='password' name='password' value=dati.password)
+    br
+    br
+    input(type='submit' value='Submit')

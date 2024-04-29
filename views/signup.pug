@@ -1,0 +1,20 @@
+doctype html
+head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Signup Form
+h1 Sign Up
+form(action='/signup' method='post')
+    label(for='mail') Email:
+    input#mail(type='email' name='mail' value=dati.mail)
+    br
+    label(for='username') Username:
+    input#username(type='text' name='username'  value=dati.username)
+    br
+    label(for='password') Password:
+    input#password(type='password' name='password'  value=dati.password)
+    br
+    label(for='password_check') Confirm Password:
+    input#password_check(type='password' name='password_check'  value=dati.password_check)
+    br
+    button(type='submit') Sign Up

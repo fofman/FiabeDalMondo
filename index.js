@@ -17,7 +17,7 @@ const saltRounds = 1;
 app.set ('appName', 'Web Service'); //imposta il nome dell'applicazione web
 app.set ('port',process.env.PORT || 3000); //imposta la porta in cui è in ascolto il server
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'html');
+app.set('view engine', 'pug');
 
 
 //Sezione Middleweare
@@ -60,7 +60,9 @@ connection.connect();
 
 //ROTTE
 
-
+app.get("/", (req, res) => {
+    console.log(req.session.userId);
+});
 
 
 //lista fiabe di un paese
@@ -85,7 +87,12 @@ app.post("/fiaba/:id", (req, res) => {
 
 //inserisci utente
 app.get("/signup", (req, res) => {
-    res.render("signup");
+    let dati = {
+        mail: "",
+        username: "",
+        password: ""
+    }
+    res.render("signup", {dati});
 });
 
 app.post("/signup", (req, res) => {
@@ -112,15 +119,16 @@ app.post("/signup", (req, res) => {
                 console.log("utente inserito");
                 req.session.userId = results.insertId;
                 req.session.auth = true;
+                res.redirect("/");
               });
         }
         else{
             let dati = {
-                "mail": mail,
-                "username": username,
-                "password": password
-            };
-            //res.render("signup", {dati});
+                mail: "",
+                username: "",
+                password: ""
+            }
+            res.render("signup", {dati});
         }
     });
 
@@ -129,40 +137,65 @@ app.post("/signup", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
+    dati = {
+        "mail": "",
+        "username": "",
+        "password": ""
+    };
     res.render("login");
 });
 
-app.post("/login", async (req, res) => {
+
+app.post("/login", (req, res) => {
     let {mail, username, password} = req.body;
     let invia = true;
     invia &= (mail.length > 0);
     invia &= (username.length > 0);
+    invia &= (password.length > 0);
 
-    if(invia){
-        connection.query('SELECT password_hash FROM utenti WHERE mail = ?', mail, function (error, results, fields) {
-            if (error) throw error;
-            if(bcrypt.compare(password, results[0].password_hash)){
-                req.session.userId = results.insertId;
+    connection.query('SELECT id, password_hash FROM utenti WHERE mail = ? LIMIT 1', mail, async (error, result, fields) => {
+        if(result.length > 0 && invia){
+            let user = result[0];
+            let auth = await bcrypt.compare(password, user.password_hash);
+            if(auth){
+                req.session.userId = user.id;
                 req.session.auth = true;
-                //res.render("/home");
             }
-            else{
-                dati = {
-                    "mail": mail,
-                    "username": username,
-                    "password": password
-                };
-                //res.render("login", {dati});
-            }
-          });
-    }
+        }
+        else{
+            invia = false;
+        }
+
+        if(invia){
+            res.redirect("/aggiungi");
+        }
+        else{
+            dati = {
+                "mail": mail,
+                "username": username,
+                "password": password
+            };
+            res.render("login", {dati});
+        }
+    });
+
+
+
 });
 
 app.get("/aggiungi", (req, res) => {
     if(req.session.auth){
         connection.query('SELECT * FROM countries', function (error, results, fields) {
-            let countries = structuredClone(results);
-            res.render("aggiungi", {countries});
+            if (error) throw error;
+            console.log(results);
+            let dati = {
+                "titolo": "",
+                "descrizione": "",
+                "fiaba": "",
+                "autore": ""
+            }
+            let countries = [...results];
+            res.render("aggiungi", {dati, countries});
         });
     }
     else{
@@ -178,16 +211,17 @@ app.post("/aggiungi", (req, res) => {
         res.send("Not permitted");
     }
     else{
-        let {titolo, descrizione, fiaba, autori, paese} = req.body;
+        let {titolo, descrizione, fiaba, autore, paese} = req.body;
         let valido = true;
         valido &= (titolo.lengh > 0);
         valido &= (descrizione.lengh > 0);
         valido &= (fiaba.lengh > 0);
-        valido &= (autori.lengh > 0);
+        valido &= (autore.lengh > 0);
         valido &= (paese.lengh > 0);
 
-        connection.query('INSERT INTO fiabe VALUES (?, ?, ?, ?, ?)', [titolo], function (error, results, fields) {
+        connection.query('INSERT INTO fiabe (titolo, descrizione, fiaba, autore, paese) VALUES (?, ?, ?, ?, ?)', [titolo, descrizione, fiaba, autore, paese], function (error, results, fields) {
             if (error) throw error;
+            console.log("aggiunta");
         });
 
     }

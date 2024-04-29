@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS `countries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella fiabe.countries: ~230 rows (circa)
-DELETE FROM `countries`;
 INSERT INTO `countries` (`ISO`, `NAME`) VALUES
 	('AF', 'Afghanistan'),
 	('AL', 'Albania'),
@@ -267,13 +266,14 @@ CREATE TABLE IF NOT EXISTS `fiabe` (
   `titolo` varchar(255) NOT NULL,
   `descrizione` varchar(255) NOT NULL,
   `autore` varchar(255) NOT NULL,
-  `paese` varchar(2) NOT NULL DEFAULT '0',
   `fiaba` longtext NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `paese` char(2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `paese` (`paese`),
+  CONSTRAINT `fiabe_ibfk_1` FOREIGN KEY (`paese`) REFERENCES `countries` (`ISO`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella fiabe.fiabe: ~0 rows (circa)
-DELETE FROM `fiabe`;
 
 -- Dump della struttura di tabella fiabe.utenti
 CREATE TABLE IF NOT EXISTS `utenti` (
@@ -282,13 +282,9 @@ CREATE TABLE IF NOT EXISTS `utenti` (
   `username` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella fiabe.utenti: ~2 rows (circa)
-DELETE FROM `utenti`;
-INSERT INTO `utenti` (`id`, `mail`, `username`, `password_hash`) VALUES
-	(16, 'a@a', 'a', '$2b$04$n8WgVgIozJsYZBo47FmiHOWT8G.twJ74Hx0soXWKXlKV26rK3VLiO'),
-	(17, 'a@a', 'a', '$2b$04$jYRSKio7nu3b8SR1vtMRCesZjspqdW1AydRjddav.33g0lU8m23Su');
+-- Dump dei dati della tabella fiabe.utenti: ~0 rows (circa)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

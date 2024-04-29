@@ -1,0 +1,17 @@
+h1 Aggiungi Fiaba
+
+
+form(action="/aggiungi", method="post")
+    select(name='paese')
+        each country in countries
+            option(value=country.ISO) #{country.NAME}
+    br
+    input(type='text', name='titolo', value=dati.titolo placeholder="titolo")
+    br
+    input(type='text', name='descrizione', value=dati.descrizione placeholder="descrizione")
+    br
+    input(type='text', name='fiaba', value=dati.fiaba placeholder="fiaba")
+    br
+    input(type='text', name='autore', value=dati.autore placeholder="autore/i")
+    br
+    input(type='submit', value='Aggiungi')
