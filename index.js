@@ -4,7 +4,6 @@ const app=express();
 const fs = require('fs'); //importo il modulo per la gestione del File System
 const morgan=require('morgan');  //importo il modulo per la gestione dei logger
 const path = require('path'); //importo il modulo per la gestione dei percorsi delle cartelle e dei file
-const helmet=require('helmet'); //importo il modulo per rendere il server web piu sicuro
 const cors=require('cors');// Cors (Cross origin resource sharing, protocollo che permette il passaggio di dati tra applicazioni e domini diversi)
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
@@ -25,8 +24,6 @@ app.set('view engine', 'pug');
 //oppure app.use(morgan(':method :url :status - :response-time ms', {stream: accessLogStream}));
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 app.use(morgan('short', {stream: accessLogStream}));
-//Middleweare sicurezza helmet
-app.use(helmet());
 //middleware sessioni
 const oneMinute = 1000 * 60 
 app.use(session({
@@ -61,7 +58,7 @@ connection.connect();
 //ROTTE
 
 app.get("/", (req, res) => {
-    console.log(req.session.userId);
+    res.sendFile(path.join(__dirname,"public","index.html"))
 });
 
 
@@ -245,7 +242,7 @@ app.post("/aggiungi", (req, res) => {
 //Middleweare che gestisce l’errore nel caso che nessuna route vada a buon fine
 app.use("*",function (req,res,next){	
 	res.status(404);
-	res.send('Url non presente');
+	res.redirect("/public/404.html");
 });
 
 //Avvio del server su una porta specifica

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title> Fiabe dal mondo </title>
+    <link rel="stylesheet" href="/public/css/index.css">
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-details">
+            <i class='bx bx-world icon'></i>
+            <div class="logo_name">Fiabe dal mondo</div>
+            <i class='bx bx-menu' id="btn"></i>
+        </div>
+        <ul class="nav-list">
+            <li>
+                <i class='bx bx-search'></i>
+                <input type="text" placeholder="Cerca">
+                <span class="tooltip">Cerca</span>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-user'></i>
+                    <span class="links_name">Login</span>
+                </a>
+                <span class="tooltip">Login</span>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">Lista completa</span>
+                </a>
+                <span class="tooltip">Lista completa</span>
+            </li>
+        </ul>
+    </div>
+    <section class="home-section">
+        <div id="map"></div>
+    </section>
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+        let searchBtn = document.querySelector(".bx-search");
+
+        closeBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+        });
+
+        searchBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+        });
+
+        function menuBtnChange() {
+            if (sidebar.classList.contains("open")) {
+                closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            } else {
+                closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+            }
+        }
+    </script>
+    <script>
+        let config = {
+            minZoom: 2.5,
+            maxZoom: 4,
+            zoomControl: false
+        };
+
+        const zoom = 2.5;
+        const lat = 32.7251036;
+        const lng = 0;
+
+        const map = L.map("map", config).setView([lat, lng], 0);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            //attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxBoundsViscosity: 0.5
+
+        }).addTo(map);
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(map);
+        map.setMaxBounds([[81.23, 218.145], [-61.1, -218.15]]);
+        map.fitWorld();
+        map.on("click", function (e) {
+            const { lat, lng } = e.latlng;
+
+            const api = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+
+            fetchData(api).then((data) => {
+                try {
+                    let codice = data.address.country_code
+                    console.log(codice);
+                    //window.open(`http://localhost:3000/fiabe/${codice}`)
+                } catch (e) {
+
+                }
+            });
+        });
+
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+
+</html>
