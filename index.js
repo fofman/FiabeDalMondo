@@ -25,7 +25,7 @@ app.set('view engine', 'pug');
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 app.use(morgan('short', {stream: accessLogStream}));
 //middleware sessioni
-const oneMinute = 1000 * 60 
+const oneMinute = 1000 * 60000
 app.use(session({
 	
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
@@ -63,8 +63,11 @@ app.get("/", (req, res) => {
 
 
 //lista fiabe di un paese
-app.get("/paese/:codice", (req, res) => {
-    connection.query('SELECT id, titolo, descrizione FROM fiabe WHERE paese = "' + (req.params.codice).toUpperCase() + '"', function (error, results, fields) {
+app.get("/paese/:codice?", (req, res) => {
+    let sql = 'SELECT id, titolo, descrizione FROM fiabe ';
+    sql += req.params.codice ? 'WHERE paese = "' + (req.params.codice).toUpperCase() + '"' : '';
+    console.log(sql);
+    connection.query(sql, function (error, results, fields) {
         if (error) throw error;
         console.log('Result: ', results);
         res.render("fiabe", {results});
@@ -73,12 +76,12 @@ app.get("/paese/:codice", (req, res) => {
 });
 
 //fiaba
-app.post("/fiaba/:id", (req, res) => {
+app.get("/fiaba/:id", (req, res) => {
     connection.query('SELECT titolo, autore, fiaba FROM fiabe WHERE id = "' + req.params.id + '"', function (error, results, fields) {
         if (error) throw error;
         console.log('Result: ', results[0]);
         let fiaba = results[0];
-        //res.render("fiaba", fiaba)
+        res.render("fiaba", {fiaba})
       });
 });
 
@@ -164,7 +167,7 @@ app.post("/login", (req, res) => {
         }
 
         if(invia){
-            res.redirect("/aggiungi");
+            res.redirect("/");
         }
         else{
             dati = {
@@ -242,10 +245,10 @@ app.post("/aggiungi", (req, res) => {
 
 
 //Middleweare che gestisce l’errore nel caso che nessuna route vada a buon fine
-// app.use("*",function (req,res,next){	
-// 	res.status(404);
-// 	res.redirect("/public/404.html");
-// });
+app.use("*",function (req,res,next){	
+	res.status(404);
+	res.redirect("/public/404.html");
+});
 
 //Avvio del server su una porta specifica
 const server=app.listen(app.get('port'),function(){

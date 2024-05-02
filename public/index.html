@@ -30,7 +30,7 @@
                 <span class="tooltip">Login</span>
             </li>
             <li>
-                <a href="/fiabe">
+                <a href="/paese/">
                     <i class='bx bx-grid-alt'></i>
                     <span class="links_name">Lista completa</span>
                 </a>
@@ -44,17 +44,12 @@
     <script>
         let sidebar = document.querySelector(".sidebar");
         let closeBtn = document.querySelector("#btn");
-        let searchBtn = document.querySelector(".bx-search");
 
         closeBtn.addEventListener("click", () => {
             sidebar.classList.toggle("open");
             menuBtnChange();
         });
 
-        searchBtn.addEventListener("click", () => {
-            sidebar.classList.toggle("open");
-            menuBtnChange();
-        });
 
         function menuBtnChange() {
             if (sidebar.classList.contains("open")) {
@@ -95,7 +90,7 @@
                 try {
                     let codice = data.address.country_code.toUpperCase();
                     console.log(codice);
-                    window.open(`http://localhost:3000/paese/${codice}`)
+                    window.location.replace(`http://localhost:3000/paese/${codice}`);
                 } catch (e) {
 
                 }
