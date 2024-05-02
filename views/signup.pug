@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  h1.mt-3 Registrazione
+
+  form(action="/signup", method="POST")
+    .form-group
+      label(for="mail") Mail:
+      input.form-control(type="mail", id="mail", name="mail")
+
+    .form-group
+      label(for="username") Username:
+      input.form-control(type="text", id="username", name="username")
+
+    .form-group
+      label(for="password") Password:
+      input.form-control(type="password", id="password", name="password")
+
+    .form-group
+      label(for="password_check") Conferma password:
+      input.form-control(type="password", id="password_check", name="password_check")
+
+    button.btn.btn-primary(type="submit") Registrati
+
+  a.mt-3(href="/login") Accedi

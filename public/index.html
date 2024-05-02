@@ -23,19 +23,14 @@
         </div>
         <ul class="nav-list">
             <li>
-                <i class='bx bx-search'></i>
-                <input type="text" placeholder="Cerca">
-                <span class="tooltip">Cerca</span>
-            </li>
-            <li>
-                <a href="#">
+                <a href="/login">
                     <i class='bx bx-user'></i>
                     <span class="links_name">Login</span>
                 </a>
                 <span class="tooltip">Login</span>
             </li>
             <li>
-                <a href="#">
+                <a href="/fiabe">
                     <i class='bx bx-grid-alt'></i>
                     <span class="links_name">Lista completa</span>
                 </a>
@@ -98,9 +93,9 @@
 
             fetchData(api).then((data) => {
                 try {
-                    let codice = data.address.country_code
+                    let codice = data.address.country_code.toUpperCase();
                     console.log(codice);
-                    //window.open(`http://localhost:3000/fiabe/${codice}`)
+                    window.open(`http://localhost:3000/paese/${codice}`)
                 } catch (e) {
 
                 }

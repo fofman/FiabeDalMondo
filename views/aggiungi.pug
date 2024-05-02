@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1.mt-3 Aggiungi Fiaba
+
+  form(action="/aggiungi", method="POST")
+    .form-group
+      label(for="paese") Seleziona un paese:
+      select.form-control(name="paese", id="paese")
+        option(value="") Paese 
+        each country in countries
+          option(value=country.ISO.toUpperCase()) #{country.NAME}
+
+    .form-group
+      label(for="titolo") Titolo:
+      input.form-control(type="text", id="titolo", name="titolo")
+
+    .form-group
+      label(for="descrizione") Descrizione:
+      input.form-control(type="text", id="descrizione", name="descrizione")
+
+    .form-group
+      label(for="fiaba") Testo della Fiaba:
+      textarea.form-control(id="fiaba", name="fiaba", rows="4", cols="50")
+
+    .form-group
+      label(for="autore") Autore:
+      input.form-control(type="text", id="autore", name="autore")
+
+    button.btn.btn-primary(type="submit") Aggiungi Fiaba

@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1.mt-3 Lista di Fiabe
+
+  ul.list-group
+    each fiaba in results
+      li.list-group-item
+        a(href=`/fiaba/${fiaba.id}`) #{fiaba.titolo} - #{fiaba.descrizione}
+

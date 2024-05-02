@@ -64,7 +64,7 @@ app.get("/", (req, res) => {
 
 //lista fiabe di un paese
 app.get("/paese/:codice", (req, res) => {
-    connection.query('SELECT id, titolo, descrizione FROM fiabe WHERE paese = "' + req.params.codice + '"', function (error, results, fields) {
+    connection.query('SELECT id, titolo, descrizione FROM fiabe WHERE paese = "' + (req.params.codice).toUpperCase() + '"', function (error, results, fields) {
         if (error) throw error;
         console.log('Result: ', results);
         res.render("fiabe", {results});
@@ -203,6 +203,7 @@ app.get("/aggiungi", (req, res) => {
 });
 
 app.post("/aggiungi", (req, res) => {
+    console.log(req.session);
     if(!req.session.auth){
         res.status(401);
         res.send("Not permitted");
@@ -214,6 +215,7 @@ app.post("/aggiungi", (req, res) => {
         valido &= (descrizione.lengh > 0);
         valido &= (fiaba.lengh > 0);
         valido &= (autore.lengh > 0);
+        console.log(paese);
         valido &= (paese.lengh > 0);
 
         connection.query('INSERT INTO fiabe (titolo, descrizione, fiaba, autore, paese) VALUES (?, ?, ?, ?, ?)', [titolo, descrizione, fiaba, autore, paese], function (error, results, fields) {
@@ -240,10 +242,10 @@ app.post("/aggiungi", (req, res) => {
 
 
 //Middleweare che gestisce l’errore nel caso che nessuna route vada a buon fine
-app.use("*",function (req,res,next){	
-	res.status(404);
-	res.redirect("/public/404.html");
-});
+// app.use("*",function (req,res,next){	
+// 	res.status(404);
+// 	res.redirect("/public/404.html");
+// });
 
 //Avvio del server su una porta specifica
 const server=app.listen(app.get('port'),function(){
